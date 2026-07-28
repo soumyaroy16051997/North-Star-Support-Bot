@@ -259,20 +259,23 @@ function handleProductQ2(
   const category = PRODUCT_CATEGORIES.find(
     (c) => c.id === ctx.selectedProductCategory
   );
+  const condition = CONDITIONS.find((c) => c.id === conditionId);
 
-  const categoryDesc = category?.description ?? "outdoor gear";
-  // Note: conditionId is stored in context but the recommendation itself
-  // stays strictly category-level per the business rules (no invented
-  // styling advice or product-level detail based on conditions).
+  const gearPhrase = category?.gearPhrase ?? category?.description ?? "outdoor gear";
+  const conditionAdjective = condition?.adjective ?? "versatile";
 
   const newCtx: ConversationContext = {
     ...transitionState(ctx, "PRODUCT_RECOMMENDATION_RESULT"),
     selectedCondition: conditionId,
   };
 
-  // Category-level recommendation only — no invented product names, styling
-  // advice, or fabricated details beyond what the business rules provide.
-  const rec = `I'd recommend looking at ${categoryDesc}.\n\nOur team can help you find the perfect item once you visit our store, or a live agent can provide more personalized guidance!`;
+  // Category-level recommendation only — deterministically combines the
+  // user's two selections (product category + conditions) without
+  // inventing specific products, prices, brands, discounts, inventory,
+  // or links.
+  const rec =
+    `Great choice! Based on your needs, I'd recommend looking at ${conditionAdjective} outdoor apparel and ${gearPhrase}.\n\n` +
+    `Would you like to explore another product category, return to the main menu, or speak with a live agent?`;
 
   return {
     messages: [
