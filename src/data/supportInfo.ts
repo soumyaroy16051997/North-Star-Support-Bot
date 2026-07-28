@@ -24,17 +24,46 @@ export const SHIPPING_INFO = {
 };
 
 export const PRODUCT_CATEGORIES = [
-  { id: "hiking", label: "🥾 Hiking", description: "hiking apparel and trail gear" },
-  { id: "camping", label: "⛺ Camping", description: "camping equipment and outdoor essentials" },
-  { id: "cold-weather", label: "🧤 Cold Weather", description: "insulated outdoor apparel and cold-weather gear" },
-  { id: "everyday", label: "🌲 Everyday Outdoor", description: "versatile outdoor apparel and everyday outdoor gear" },
+  {
+    id: "hiking",
+    label: "🥾 Hiking",
+    description: "hiking apparel and trail gear",
+    // Short noun phrase used when composing the final, condition-aware
+    // recommendation (see responseGenerator.ts). Category-level only —
+    // no specific products, prices, or brands.
+    gearPhrase: "trail-ready hiking gear",
+  },
+  {
+    id: "camping",
+    label: "⛺ Camping",
+    description: "camping equipment and outdoor essentials",
+    gearPhrase: "durable camping equipment",
+  },
+  {
+    id: "cold-weather",
+    label: "🧤 Cold Weather",
+    description: "insulated outdoor apparel and cold-weather gear",
+    gearPhrase: "insulated cold-weather gear",
+  },
+  {
+    id: "everyday",
+    label: "🌲 Everyday Outdoor",
+    description: "versatile outdoor apparel and everyday outdoor gear",
+    gearPhrase: "versatile everyday outdoor gear",
+  },
 ];
 
 export const CONDITIONS = [
-  { id: "warm", label: "☀️ Warm Weather" },
-  { id: "cold", label: "❄️ Cold Weather" },
-  { id: "rainy", label: "🌧️ Rainy Conditions" },
-  { id: "mixed", label: "🌤️ Mixed Conditions" },
+  {
+    id: "warm",
+    label: "☀️ Warm Weather",
+    // Adjective phrase used to describe the condition when composing the
+    // final recommendation. Category-level only, no invented specifics.
+    adjective: "warm-weather",
+  },
+  { id: "cold", label: "❄️ Cold Weather", adjective: "cold-weather" },
+  { id: "rainy", label: "🌧️ Rainy Conditions", adjective: "rain-ready" },
+  { id: "mixed", label: "🌤️ Mixed Conditions", adjective: "all-condition" },
 ];
 
 export const QUICK_EXAMPLES = [
