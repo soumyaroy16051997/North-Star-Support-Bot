@@ -252,6 +252,44 @@ function handleProductQ1(
   };
 }
 
+function handleInvalidProductActivity(
+  ctx: ConversationContext
+): EngineResponse {
+  return {
+    messages: [
+      bot(
+        "Hmm, I didn't recognize that activity. 🤔 Please choose one of the options below, or describe what you're shopping for (e.g. hiking, camping, cold weather, everyday use).",
+        PRODUCT_CATEGORIES.map((c) => ({
+          label: c.label,
+          value: `__PRODUCT_CAT__${c.id}`,
+          variant: "primary" as const,
+        }))
+      ),
+    ],
+    // Stay on the activity-selection step instead of resetting.
+    newContext: transitionState(ctx, "PRODUCT_RECOMMENDATION_Q1"),
+  };
+}
+
+function handleInvalidProductCondition(
+  ctx: ConversationContext
+): EngineResponse {
+  return {
+    messages: [
+      bot(
+        "Hmm, I didn't recognize that condition. 🤔 Please choose one of the options below, or describe the conditions (e.g. warm, cold, rainy, mixed).",
+        CONDITIONS.map((c) => ({
+          label: c.label,
+          value: `__CONDITION__${c.id}`,
+          variant: "primary" as const,
+        }))
+      ),
+    ],
+    // Stay on the conditions-selection step instead of resetting.
+    newContext: transitionState(ctx, "PRODUCT_RECOMMENDATION_Q2"),
+  };
+}
+
 function handleProductQ2(
   conditionId: string,
   ctx: ConversationContext
@@ -407,7 +445,13 @@ export function processUserInput(
     if (lc.includes("every") || lc.includes("daily") || lc.includes("casual")) {
       return handleProductQ1("everyday", ctx);
     }
-    // Fall through to intent recognition
+    // Unrecognized activity: allow explicit navigation away (main menu /
+    // live agent), otherwise stay in this step and ask again instead of
+    // falling through to the generic global fallback.
+    const q1Intent = recognizeIntent(trimmed);
+    if (q1Intent === "MAIN_MENU") return getMainMenuResponse(ctx);
+    if (q1Intent === "HUMAN_HANDOFF") return handleLiveAgent(ctx);
+    return handleInvalidProductActivity(ctx);
   }
 
   if (ctx.state === "PRODUCT_RECOMMENDATION_Q2") {
@@ -424,7 +468,13 @@ export function processUserInput(
     if (lc.includes("mix") || lc.includes("vary") || lc.includes("all")) {
       return handleProductQ2("mixed", ctx);
     }
-    // Fall through to intent recognition
+    // Unrecognized condition: allow explicit navigation away (main menu /
+    // live agent), otherwise stay in this step and ask again instead of
+    // falling through to the generic global fallback.
+    const q2Intent = recognizeIntent(trimmed);
+    if (q2Intent === "MAIN_MENU") return getMainMenuResponse(ctx);
+    if (q2Intent === "HUMAN_HANDOFF") return handleLiveAgent(ctx);
+    return handleInvalidProductCondition(ctx);
   }
 
   if (ctx.state === "LIVE_AGENT") {
