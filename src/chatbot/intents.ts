@@ -18,7 +18,13 @@ interface IntentRule {
 const INTENT_RULES: IntentRule[] = [
   {
     intent: "ORDER_TRACKING",
-    keywords: ["track", "order", "package", "shipment", "parcel", "status", "where"],
+    // NOTE: "where" was intentionally removed from this list. It is a generic
+    // question word that also appears in unrelated queries (e.g. "Where is my
+    // banana?"), which previously caused any "where is my X" message to be
+    // scored as ORDER_TRACKING regardless of what X was. Keywords here are
+    // now specific to order/package/shipment context so arbitrary nouns no
+    // longer qualify as a tracking request.
+    keywords: ["track", "order", "package", "shipment", "parcel", "status"],
     phrases: [
       "where is my order",
       "track my order",
@@ -32,6 +38,9 @@ const INTENT_RULES: IntentRule[] = [
       "where is my package",
       "can you tell me where my package is",
       "where is my shipment",
+      "where is my delivery",
+      "where's my delivery",
+      "wheres my delivery",
       "track an order",
       "find my order",
       "my order",
